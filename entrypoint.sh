@@ -9,19 +9,14 @@ keep_alive_local() {
     while true; do
         random_timeout=$((40 + RANDOM % 51))
         sleep "$random_timeout"
-        if curl -s --max-time 5 "https://$KOYEB_PUBLIC_DOMAIN" >/dev/null; then
-        fi
+        curl -s --max-time 5 "https://$KOYEB_PUBLIC_DOMAIN" >/dev/null
     done
 }
 
 monitor_forbidden() {
     while true; do
         for cmd in $FORBIDDEN; do
-            if command -v "$cmd" >/dev/null 2>&1; then
-                echo "$(date '+%Y-%m-%d %H:%M:%S') [WARNING] Обнаружена запрещенная утилита: $cmd"
-                if apt-get purge -y "$cmd" >/dev/null 2>&1; then
-                fi
-            fi
+            command -v "$cmd" >/dev/null 2>&1 && echo "$(date '+%Y-%m-%d %H:%M:%S') [WARNING] Обнаружена запрещенная утилита: $cmd" && apt-get purge -y "$cmd" >/dev/null 2>&1
         done
         sleep 10
     done
