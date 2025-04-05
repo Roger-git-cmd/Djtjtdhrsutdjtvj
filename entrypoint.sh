@@ -7,9 +7,8 @@ PORT=${PORT:-8080}
 
 keep_alive_local() {
     while true; do
-        random_timeout=$((40 + RANDOM % 51))
-        sleep "$random_timeout"
-        curl -s --max-time 5 "https://$KOYEB_PUBLIC_DOMAIN" >/dev/null
+        sleep 30
+        curl -s --max-time 10 "https://$KOYEB_PUBLIC_DOMAIN" >/dev/null
     done
 }
 
