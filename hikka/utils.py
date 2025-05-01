@@ -1621,6 +1621,8 @@ def get_cpu_usage() -> float:
     except Exception:
         return 0
 
+init_ts = time.perf_counter()
+
 # GeekTG Compatibility
 def get_git_info() -> typing.Tuple[str, str]:
     """
