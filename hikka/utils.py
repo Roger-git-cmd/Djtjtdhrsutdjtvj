@@ -1613,22 +1613,13 @@ def get_ram_usage() -> float:
 
 
 def get_cpu_usage() -> float:
-    """Returns current process tree CPU usage in %"""
+    """Returns total system CPU usage in %"""
     try:
         import psutil
-
-        current_process = psutil.Process(os.getpid())
-        cpu = current_process.cpu_percent()
-        for child in current_process.children(recursive=True):
-            cpu += child.cpu_percent()
-
+        cpu = psutil.cpu_percent(interval=0.5)
         return round(cpu, 1)
     except Exception:
         return 0
-
-
-init_ts = time.perf_counter()
-
 
 # GeekTG Compatibility
 def get_git_info() -> typing.Tuple[str, str]:
