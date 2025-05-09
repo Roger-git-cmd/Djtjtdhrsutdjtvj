@@ -1598,28 +1598,30 @@ def get_topic(message: Message) -> typing.Optional[int]:
 
 
 def get_ram_usage() -> float:
-    """Returns current process tree memory usage in MB"""
+    """Returns total memory usage of all processes in MB"""
     try:
         import psutil
 
-        current_process = psutil.Process(os.getpid())
-        mem = current_process.memory_info()[0] / 2.0**20
-        for child in current_process.children(recursive=True):
-            mem += child.memory_info()[0] / 2.0**20
+        total_mem = 0
+        for process in psutil.process_iter(['memory_info']):
+            try:
+                total_mem += process.memory_info()[0] / 2.0**20
+            except (psutil.NoSuchProcess, psutil.AccessDenied, psutil.ZombieProcess):
+                continue
 
-        return round(mem, 1)
+        return round(total_mem, 1)
     except Exception:
         return 0
 
 
 def get_cpu_usage() -> float:
-    """Returns total system CPU usage in %"""
     try:
         import psutil
-        cpu = psutil.cpu_percent(interval=0.5)
-        return round(cpu, 1)
-    except Exception:
-        return 0
+        cpu_percent = psutil.cpu_percent(interval=1.0)
+        return max(0.0, min(100.0, round(cpu_percent, 1)))
+    except (ImportError, AttributeError, RuntimeError):
+        return 0.0
+ 
 
 init_ts = time.perf_counter()
 
