@@ -1617,31 +1617,13 @@ def get_ram_usage() -> float:
 import time
 
 def get_cpu_usage() -> float:
+    """Returns total system CPU usage in %"""
     try:
-        if not __import__('sys').platform.startswith('win'):
-            def _read_cpu():
-                with open("/proc/stat") as f:
-                    line = f.readline()
-                return [int(x) for x in line.split()[1:]]
-            
-            t1 = _read_cpu()
-            time.sleep(0.5)
-            t2 = _read_cpu()
-            
-            total = sum(t2) - sum(t1)
-            idle = t2[3] - t1[3]
-            return round((100.0 * (total - idle) / total) if total > 0 else 0.0, 1)
-        
-        else:
-            output = __import__('subprocess').check_output(
-                'wmic cpu get loadpercentage', 
-                shell=True
-            ).decode().strip()
-            return float(output.split()[-1])
-    
+        import psutil
+        cpu = psutil.cpu_percent(interval=0.5)
+        return round(cpu, 1)
     except Exception:
-        return 0.0
- 
+        return 0
 
 init_ts = time.perf_counter()
 
