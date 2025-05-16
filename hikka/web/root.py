@@ -302,14 +302,13 @@ class Web:
             system_lang_code="en-US",
         )
 
-	async def can_add(self, request: web.Request) -> web.Response:
-    	if self.client_data and ("LAVHOST" in os.environ or "DOCKER" in os.environ):
+        async def can_add(self, request: web.Request) -> web.Response:
+        if self.client_data and ("LAVHOST" in os.environ or "DOCKER" in os.environ):
             return web.Response(status=403, body="Forbidden by host EULA")
-
             return web.Response(status=200, body="Yes")
 		
 	async def send_tg_code(self, request: web.Request) -> web.Response:
-        if not self._check_session(request):
+	if not self._check_session(request):
             return web.Response(status=401, body="Authorization required")
 
         if self.client_data and "LAVHOST" in os.environ:
