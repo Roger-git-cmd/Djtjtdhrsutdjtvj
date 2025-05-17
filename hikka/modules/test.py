@@ -373,9 +373,10 @@ class TestMod(loader.Module):
                 (self.config["hint"]) if random.choice([0, 0, 1]) == 1 else ""
             ),
             hostname=socket.gethostname(),
-            user=getpass.getuser(),    ),
-        )
-
+            user=getpass.getuser(),
+        ),
+    )
+    
     async def client_ready(self):
         chat, _ = await utils.asset_channel(
             self._client,
