@@ -7,6 +7,8 @@
 import inspect
 import logging
 import os
+import socket
+import getpass
 import random
 import subprocess
 import time
@@ -358,21 +360,20 @@ class TestMod(loader.Module):
 
     @loader.command()
     async def ping(self, message: Message):
-        """- Find out your userbot ping"""
-        start = time.perf_counter_ns()
-        message = await utils.answer(message, self.config["ping_emoji"])
+    """- Find out your userbot ping"""
+    start = time.perf_counter_ns()
+    message = await utils.answer(message, self.config["ping_emoji"])
 
-        await utils.answer(
-            message,
-            self.config["Text_Of_Ping"].format(
-                ping=round((time.perf_counter_ns() - start) / 10**6, 3),
-                uptime=utils.formatted_uptime(),
-                ping_hint=(
-                    (self.config["hint"]) if random.choice([0, 0, 1]) == 1 else ""
-                ),
-                hostname=subprocess.run(['hostname'], stdout=subprocess.PIPE).stdout.decode().strip(),
-                user=subprocess.run(['whoami'], stdout=subprocess.PIPE).stdout.decode().strip(),
-    ),
+    await utils.answer(
+        message,
+        self.config["Text_Of_Ping"].format(
+            ping=round((time.perf_counter_ns() - start) / 10**6, 3),
+            uptime=utils.formatted_uptime(),
+            ping_hint=(
+                (self.config["hint"]) if random.choice([0, 0, 1]) == 1 else ""
+            ),
+            hostname=socket.gethostname(),
+            user=getpass.getuser(),    ),
         )
 
     async def client_ready(self):
