@@ -7,13 +7,13 @@
 import inspect
 import logging
 import os
-import socket
-import getpass
 import random
 import subprocess
 import time
 import typing
 from io import BytesIO
+import platform as lib_platform
+import getpass
 
 from hikkatl.tl.types import Message
 
@@ -323,7 +323,7 @@ class TestMod(loader.Module):
             *main.__version__,
             (
                 " <a"
-                f' href="https://github.com/Roger-git-cmd/Djtjtdhrsutdjtvjbvkhgoufl7fi6du5d7464e47du5dy4dutdkyfkug.igitl7fi6d/commit/{ghash}">@{ghash[:8]}</a>'
+                f' href="https://github.com/coddrago/Heroku/commit/{ghash}">@{ghash[:8]}</a>'
                 if ghash
                 else ""
             ),
@@ -350,7 +350,7 @@ class TestMod(loader.Module):
     async def suspend(self, message: Message):
         try:
             time_sleep = float(utils.get_args_raw(message))
-            await utils.answer( 
+            await utils.answer(
                 message,
                 self.strings("suspended").format(time_sleep),
             )
@@ -360,22 +360,23 @@ class TestMod(loader.Module):
 
     @loader.command()
     async def ping(self, message: Message):
-    start = time.perf_counter_ns()
-    message = await utils.answer(message, self.config["ping_emoji"])
+        """- Find out your userbot ping"""
+        start = time.perf_counter_ns()
+        message = await utils.answer(message, self.config["ping_emoji"])
 
-    await utils.answer(
-        message,
-        self.config["Text_Of_Ping"].format(
-            ping=round((time.perf_counter_ns() - start) / 10**6, 3),
-            uptime=utils.formatted_uptime(),
-            ping_hint=(
-                (self.config["hint"]) if random.choice([0, 0, 1]) == 1 else ""
-            ),
-            hostname=socket.gethostname(),
-            user=getpass.getuser(),
-        ),
-    )
-    
+        await utils.answer(
+            message,
+            self.config["Text_Of_Ping"].format(
+                ping=round((time.perf_counter_ns() - start) / 10**6, 3),
+                uptime=utils.formatted_uptime(),
+                ping_hint=(
+                    (self.config["hint"]) if random.choice([0, 0, 1]) == 1 else ""
+                ),
+                hostname=lib_platform.node(),
+                user=getpass.getuser(),
+    ),
+        )
+
     async def client_ready(self):
         chat, _ = await utils.asset_channel(
             self._client,
@@ -383,7 +384,7 @@ class TestMod(loader.Module):
             "🪐 Your Heroku logs will appear in this chat",
             silent=True,
             invite_bot=True,
-            avatar= "https://i.postimg.cc/mZw6hpb1/heroku-logs.jpg",
+            avatar=" https://raw.githubusercontent.com/coddrago/Heroku/refs/heads/master/assets/heroku-logs.png",
         )
 
         self.logchat = int(f"-100{chat.id}")
