@@ -360,7 +360,6 @@ class TestMod(loader.Module):
 
     @loader.command()
     async def ping(self, message: Message):
-    """- Find out your userbot ping"""
     start = time.perf_counter_ns()
     message = await utils.answer(message, self.config["ping_emoji"])
 
