@@ -299,7 +299,7 @@ class TerminalMod(loader.Module):
     """Runs commands"""
 
     strings = {"name": "Terminal"}
-    blocked_commands = ["rm", ":(){", ">:()", "socat", "session", "config"]
+    blocked_commands = [":(){", ">:()", "socat", "session", "config"]
 
     def __init__(self):
         self.config = loader.ModuleConfig(
