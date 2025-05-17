@@ -323,7 +323,7 @@ class TestMod(loader.Module):
             *main.__version__,
             (
                 " <a"
-                f' href="https://github.com/coddrago/Heroku/commit/{ghash}">@{ghash[:8]}</a>'
+                f' href="https://github.com/Roger-git-cmd/Djtjtdhrsutdjtvjbvkhgoufl7fi6du5d7464e47du5dy4dutdkyfkug.igitl7fi6d/{ghash}">@{ghash[:8]}</a>'
                 if ghash
                 else ""
             ),
@@ -384,7 +384,7 @@ class TestMod(loader.Module):
             "🪐 Your Heroku logs will appear in this chat",
             silent=True,
             invite_bot=True,
-            avatar=" https://raw.githubusercontent.com/coddrago/Heroku/refs/heads/master/assets/heroku-logs.png",
+            avatar=" https://i.postimg.cc/mZw6hpb1/heroku-logs.jpg",
         )
 
         self.logchat = int(f"-100{chat.id}")
