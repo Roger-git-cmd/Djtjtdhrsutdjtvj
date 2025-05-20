@@ -943,7 +943,7 @@ def get_named_platform() -> str:
         return "🌼 HikkaHost"
 
     if main.IS_DOCKER:
-        return "👁️ VamHost"
+        return "Vds"
 
     if main.IS_TERMUX:
         return "🕶 Termux"
