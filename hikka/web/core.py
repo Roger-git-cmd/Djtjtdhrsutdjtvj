@@ -76,41 +76,41 @@ class Web(root.Web):
     async def get_url(self, proxy_pass: bool) -> str:
         url = None
 
-    if all(option in os.environ for option in {"LAVHOST", "USER", "SERVER"}):
-        return f"https://{os.environ['USER']}.{os.environ['SERVER']}.lavhost.ml"
+        if all(option in os.environ for option in {"LAVHOST", "USER", "SERVER"}):
+            return f"https://{os.environ['USER']}.{os.environ['SERVER']}.lavhost.ml"
 
-    if proxy_pass:
-        with contextlib.suppress(Exception):
-            url = await asyncio.wait_for(
-                self.proxypasser.get_url(self.port),
-                timeout=10,
-            )
+        if proxy_pass:
+            with contextlib.suppress(Exception):
+                url = await asyncio.wait_for(
+                    self.proxypasser.get_url(self.port),
+                    timeout=10,
+                )
 
-    if not url:
+        if not url:
+            try:
+                async with aiohttp.ClientSession() as session:
+                    async with session.get('https://api.ipify.org') as response:
+                        if response.status == 200:
+                            ip = await response.text()
+                        else:
+                            ip = self._get_local_ip()
+            except Exception:
+                ip = self._get_local_ip()
+
+            url = f"http://{ip}:{self.port}"
+
+        self.url = url
+        return url
+
+    def _get_local_ip(self):
         try:
-            async with aiohttp.ClientSession() as session:
-                async with session.get('https://api.ipify.org') as response:
-                    if response.status == 200:
-                        ip = await response.text()
-                    else:
-                        ip = self._get_local_ip()
+            s = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
+            s.connect(("8.8.8.8", 80))
+            ip = s.getsockname()[0]
+            s.close()
+            return ip
         except Exception:
-            ip = self._get_local_ip()
-
-        url = f"http://{ip}:{self.port}"
-
-    self.url = url
-    return url
-
-def _get_local_ip(self):
-    try:
-        s = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
-        s.connect(("8.8.8.8", 80))
-        ip = s.getsockname()[0]
-        s.close()
-        return ip
-    except Exception:
-        return "127.0.0.1"
+            return "127.0.0.1"
 
     async def start(self, port: int, proxy_pass: bool = False):
         self.runner = web.AppRunner(self.app)
