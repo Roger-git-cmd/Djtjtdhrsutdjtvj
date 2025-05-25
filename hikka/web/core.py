@@ -89,10 +89,20 @@ class Web(root.Web):
         if not url:
             try:
                 async with aiohttp.ClientSession() as session:
-                    async with session.get('https://api.ipify.org') as response:
-                        if response.status == 200:
-                            ip = await response.text()
-                        else:
+                    try:
+                        async with session.get('https://api.ipify.org', timeout=10) as response:
+                            if response.status == 200:
+                                ip = await response.text()
+                            else:
+                                ip = self._get_local_ip()
+                    except Exception:
+                        try:
+                            async with session.get('https://ifconfig.me', timeout=10) as response:
+                                if response.status == 200:
+                                    ip = await response.text()
+                                else:
+                                    ip = self._get_local_ip()
+                        except Exception:
                             ip = self._get_local_ip()
             except Exception:
                 ip = self._get_local_ip()
@@ -110,8 +120,12 @@ class Web(root.Web):
             s.close()
             return ip
         except Exception:
-            return "127.0.0.1"
-
+            try:
+                ip = socket.gethostbyname(socket.gethostname())
+                return ip
+            except Exception:
+                return "127.0.0.1"
+                
     async def start(self, port: int, proxy_pass: bool = False):
         self.runner = web.AppRunner(self.app)
         await self.runner.setup()
