@@ -1624,7 +1624,7 @@ def get_ram_usage() -> float:
 
 import time
 
-def get_cpu_usage_linux():
+def get_cpu_usage():
     try:
         with open('/proc/stat', 'r') as f:
             values = [float(x) for x in f.readline().split()[1:]]
