@@ -1604,21 +1604,23 @@ def get_topic(message: Message) -> typing.Optional[int]:
 
 
 def get_ram_usage() -> float:
-    """Returns total memory usage of all processes in MB"""
+    """Returns memory used as reported by the OS (MemTotal - MemAvailable) in MB"""
     try:
-        import psutil
+        with open("/proc/meminfo") as f:
+            meminfo = f.read()
 
-        total_mem = 0
-        for process in psutil.process_iter(['memory_info']):
-            try:
-                total_mem += process.memory_info()[0] / 2.0**20
-            except (psutil.NoSuchProcess, psutil.AccessDenied, psutil.ZombieProcess):
-                continue
+        def get_value(key: str) -> int:
+            import re
+            match = re.search(rf'{key}:\s+(\d+)', meminfo)
+            return int(match.group(1)) if match else 0
 
-        return round(total_mem, 1)
+        mem_total = get_value("MemTotal")
+        mem_available = get_value("MemAvailable")
+
+        used_kib = mem_total - mem_available
+        return round(used_kib / 1024, 1)
     except Exception:
         return 0
-
 
 import time
 
