@@ -1624,12 +1624,12 @@ def get_ram_usage() -> float:
 
 import time
 
-def get_cpu_usage():
+def get_cpu_usage_linux():
     try:
-        import psutil
-        interval=0.4
-        return f"{psutil.cpu_percent(interval=0.1):.2f}"
-    except Exception:
+        with open('/proc/stat', 'r') as f:
+            values = [float(x) for x in f.readline().split()[1:]]
+            return f"{100 * (1 - values[3] / sum(values)):.2f}"
+    except:
         return "0.00"
         
 init_ts = time.perf_counter()
