@@ -1627,15 +1627,8 @@ import time
 def get_cpu_usage():
     try:
         import psutil
-        num_cores = psutil.cpu_count(logical=True)
-        cpu = 0.0
-        for proc in psutil.process_iter():
-            try:
-                cpu += proc.cpu_percent()
-            except (psutil.NoSuchProcess, psutil.AccessDenied, psutil.ZombieProcess):
-                pass
-        normalized_cpu = cpu / num_cores
-        return f"{normalized_cpu:.2f}"
+        interval=0.4
+        return f"{psutil.cpu_percent(interval=0.1):.2f}"
     except Exception:
         return "0.00"
         
