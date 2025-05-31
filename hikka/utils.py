@@ -943,8 +943,11 @@ def get_named_platform() -> str:
         return "🌼 HikkaHost"
 
     if main.IS_DOCKER:
-        return "👁️ VamHost"
+        return "🐋 Docker"
 
+    if main.IS_VAMHOST:
+        return "👁️ VamHost"
+    
     if main.IS_TERMUX:
         return "🕶 Termux"
 
@@ -1009,6 +1012,9 @@ def get_platform_emoji() -> str:
     if main.IS_DOCKER:
         return BASE.format(5352678227582152630)
 
+    if main.IS_DOCKER:
+        return BASE.format(928764820108374929827)
+    
     return BASE.format(5393588431026674882)
 
 allowed_ids = [1714120111, 1655585249] 
