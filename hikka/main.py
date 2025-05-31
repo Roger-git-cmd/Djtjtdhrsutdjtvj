@@ -90,6 +90,7 @@ hostname = socket.gethostname()
 
 IS_TERMUX = "com.termux" in os.environ.get("PREFIX", "")
 IS_CODESPACES = "CODESPACES" in os.environ
+IS_VAMHOST = "vamhost-" in hostname
 IS_DOCKER = "DOCKER" in os.environ
 IS_RAILWAY = "RAILWAY" in os.environ
 IS_GOORM = "GOORM" in os.environ
@@ -101,7 +102,6 @@ IS_SERV00 = "serv00" in socket.gethostname()
 IS_TOTHOST = "TOTHOST" in os.environ
 IS_AEZA = "aeza" in socket.gethostname()
 IS_DJHOST = "IS_DJHOST" in os.environ
-IS_VAMHOST = "vamhost-" in hostname
 IS_USERLAND = "userland" in os.environ
 IS_WSL = False
 with contextlib.suppress(Exception):
