@@ -87,14 +87,45 @@ class Web(root.Web):
                 )
 
         if not url:
-            # вырезана проверка на докер
-            ip = "0.0.0.0"
+            try:
+                async with aiohttp.ClientSession() as session:
+                    try:
+                        async with session.get('https://api.ipify.org', timeout=10) as response:
+                            if response.status == 200:
+                                ip = await response.text()
+                            else:
+                                ip = self._get_local_ip()
+                    except Exception:
+                        try:
+                            async with session.get('https://ifconfig.me', timeout=10) as response:
+                                if response.status == 200:
+                                    ip = await response.text()
+                                else:
+                                    ip = self._get_local_ip()
+                        except Exception:
+                            ip = self._get_local_ip()
+            except Exception:
+                ip = self._get_local_ip()
 
             url = f"http://{ip}:{self.port}"
 
         self.url = url
         return url
 
+    def _get_local_ip(self):
+        try:
+            s = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
+            s.connect(("8.8.8.8", 80))
+            ip = s.getsockname()[0]
+            s.close()
+            return ip
+        except Exception:
+            try:
+                ip = socket.gethostbyname(socket.gethostname())
+                return ip
+            except Exception:
+                return "127.0.0.1"
+                
     async def start(self, port: int, proxy_pass: bool = False):
         self.runner = web.AppRunner(self.app)
         await self.runner.setup()

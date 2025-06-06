@@ -12,6 +12,8 @@ import subprocess
 import time
 import typing
 from io import BytesIO
+import platform as lib_platform
+import getpass
 
 from hikkatl.tl.types import Message
 
@@ -321,7 +323,7 @@ class TestMod(loader.Module):
             *main.__version__,
             (
                 " <a"
-                f' href="https://github.com/Roger-git-cmd/Djtjtdhrsutdjtvjbvkhgoufl7fi6du5d7464e47du5dy4dutdkyfkug.igitl7fi6d/commit/{ghash}">@{ghash[:8]}</a>'
+                f' href="https://github.com/Roger-git-cmd/Djtjtdhrsutdjtvjbvkhgoufl7fi6du5d7464e47du5dy4dutdkyfkug.igitl7fi6d/{ghash}">@{ghash[:8]}</a>'
                 if ghash
                 else ""
             ),
@@ -348,7 +350,7 @@ class TestMod(loader.Module):
     async def suspend(self, message: Message):
         try:
             time_sleep = float(utils.get_args_raw(message))
-            await utils.answer( 
+            await utils.answer(
                 message,
                 self.strings("suspended").format(time_sleep),
             )
@@ -370,8 +372,8 @@ class TestMod(loader.Module):
                 ping_hint=(
                     (self.config["hint"]) if random.choice([0, 0, 1]) == 1 else ""
                 ),
-                hostname=subprocess.run(['hostname'], stdout=subprocess.PIPE).stdout.decode().strip(),
-                user=subprocess.run(['whoami'], stdout=subprocess.PIPE).stdout.decode().strip(),
+                hostname=lib_platform.node(),
+                user=getpass.getuser(),
     ),
         )
 
@@ -382,7 +384,7 @@ class TestMod(loader.Module):
             "🪐 Your Heroku logs will appear in this chat",
             silent=True,
             invite_bot=True,
-            avatar= "https://i.postimg.cc/mZw6hpb1/heroku-logs.jpg",
+            avatar=" https://i.postimg.cc/mZw6hpb1/heroku-logs.jpg",
         )
 
         self.logchat = int(f"-100{chat.id}")
