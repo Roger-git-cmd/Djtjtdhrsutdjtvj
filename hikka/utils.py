@@ -1631,6 +1631,8 @@ def get_disk_usage() -> str:
         used_gib = stat.used / (1024 ** 3)
         total_gib = stat.total / (1024 ** 3)
         return f"{int(used_gib):03d}/{int(total_gib):03d}"
+    except Exception:
+        return "error"
         
 def get_cpu_usage():
     try:
