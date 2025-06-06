@@ -102,6 +102,7 @@ class HerokuInfoMod(loader.Module):
                 uptime=utils.formatted_uptime(),
                 cpu_usage=utils.get_cpu_usage(),
                 ram_usage=f"{utils.get_ram_usage()} MB",
+                disk_usage=f"{utils.get_disk_usage()} %",
                 branch=version.branch,
                 hostname=lib_platform.node(),
                 user=getpass.getuser(),
@@ -119,6 +120,8 @@ class HerokuInfoMod(loader.Module):
                 f"</b> <i>~{utils.get_cpu_usage()} %</i>\n<b>{{}}"
                 f' {self.strings("ram_usage")}:'
                 f"</b> <i>~{utils.get_ram_usage()} MB</i>\n<b>{{}}</b>"
+                f' {self.strings("disk_usage")}:'
+                f"</b> <i>~{get_disk_usage()} %</i>\n<b>{{}}</b>"
             ).format(
                 *map(
                     lambda x: utils.remove_html(x) if inline else x,
