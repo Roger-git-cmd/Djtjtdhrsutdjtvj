@@ -1625,16 +1625,15 @@ def get_ram_usage() -> float:
 import time
 
 def get_disk_usage() -> float:
-    """Returns disk usage percentage for the root filesystem"""
     try:
         import shutil
-        stat = shutil.disk_usage('/')
-        used = stat.used
-        total = stat.total
-        return round((used / total) * 100, 1)
+        stat = shutil.disk_usage("/")
+        used_bytes = stat.used
+        used_gib = used_bytes / (1024 ** 3)
+        return round(used_gib, 1)
     except Exception:
         return 0
-
+        
 def get_cpu_usage():
     try:
         with open('/proc/stat', 'r') as f:
