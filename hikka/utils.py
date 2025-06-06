@@ -1626,12 +1626,11 @@ import time
 
 def get_disk_usage() -> str:
     import shutil
-    import os
     current_dir = os.getcwd()
     stat = shutil.disk_usage(current_dir)
     used_gib = stat.used / (1024 ** 3)
     total_gib = stat.total / (1024 ** 3)
-    return f"{int(used_gib)}/{int(total_gib)}"
+    return f"{used_gib:.2f}/{total_gib:.2f}"
         
 def get_cpu_usage():
     try:
