@@ -1627,12 +1627,15 @@ import time
 def get_disk_usage() -> str:
     try:
         import shutil
-        stat = shutil.disk_usage("/")
+        import os
+        current_dir = os.getcwd() 
+        stat = shutil.disk_usage(current_dir)
         used_gib = stat.used / (1024 ** 3)
         total_gib = stat.total / (1024 ** 3)
-        return f"{int(used_gib):03d}/{int(total_gib):03d}"
+        if total_gib == 0:
+            return "0/0"
     except Exception:
-        return "error"
+        return "0/0"
         
 def get_cpu_usage():
     try:
