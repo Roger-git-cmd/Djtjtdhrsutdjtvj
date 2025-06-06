@@ -1625,17 +1625,13 @@ def get_ram_usage() -> float:
 import time
 
 def get_disk_usage() -> str:
-    try:
-        import shutil
-        import os
-        current_dir = os.getcwd() 
-        stat = shutil.disk_usage(current_dir)
-        used_gib = stat.used / (1024 ** 3)
-        total_gib = stat.total / (1024 ** 3)
-        if total_gib == 0:
-            return "0/0"
-    except Exception:
-        return "0/0"
+    import shutil
+    import os
+    current_dir = os.getcwd()
+    stat = shutil.disk_usage(current_dir)
+    used_gib = stat.used / (1024 ** 3)
+    total_gib = stat.total / (1024 ** 3)
+    return f"{int(used_gib)}/{int(total_gib)}"
         
 def get_cpu_usage():
     try:
