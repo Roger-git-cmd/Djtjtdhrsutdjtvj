@@ -1624,15 +1624,13 @@ def get_ram_usage() -> float:
 
 import time
 
-def get_disk_usage() -> float:
+def get_disk_usage() -> str:
     try:
         import shutil
         stat = shutil.disk_usage("/")
-        used_bytes = stat.used
-        used_gib = used_bytes / (1024 ** 3)
-        return round(used_gib, 1)
-    except Exception:
-        return 0
+        used_gib = stat.used / (1024 ** 3)
+        total_gib = stat.total / (1024 ** 3)
+        return f"{int(used_gib):03d}/{int(total_gib):03d}"
         
 def get_cpu_usage():
     try:
