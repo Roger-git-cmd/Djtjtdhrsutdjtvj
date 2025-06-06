@@ -121,7 +121,7 @@ class HerokuInfoMod(loader.Module):
                 f' {self.strings("ram_usage")}:'
                 f"</b> <i>~{utils.get_ram_usage()} MB</i>\n<b>{{}}</b>"
                 f' {self.strings("disk_usage")}:'
-                f"</b> <i>~{utils.get_disk_usage()} %</i>\n<b>{{}}</b>"
+                f"</b> <i>~{utils.get_disk_usage()} GiB</i>\n<b>{{}}</b>"
             ).format(
                 *map(
                     lambda x: utils.remove_html(x) if inline else x,
